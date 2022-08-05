@@ -56,16 +56,13 @@ calImg2 = undistortImage(img2, camParams.cameraParams);
 % SIFT feature extraction
 [kp1, kp2] = SIFTFeatureExtract(img1, img2);
 
-% to homogeous coords
 homo_kp1 = horzcat(kp1(1:5,:), ones([5,1]));
 homo_kp2 = horzcat(kp2(1:5,:), ones([5,1]));
 
-% multiple intrinsic matrix
-homo_normal_kp1 = homo_kp1*inv(temp)'; %(5,3)
-homo_normal_kp2 = temp\homo_kp2'; %(3,5)
+homo_normal_kp1 = homo_kp1'*inv(temp)';
+homo_normal_kp2 = temp/homo_kp2;
 
-Evec = calibrated_fivepoint(homo_normal_kp1',homo_normal_kp2);
-
+disp(calibrated_fivepoint(kp1(1:5,:),kp2(1:5,:)))
 
 % lib example, not completement
 fRANSAC = estimateFundamentalMatrix(kp1, kp2, Method="RANSAC", NumTrials=2000);

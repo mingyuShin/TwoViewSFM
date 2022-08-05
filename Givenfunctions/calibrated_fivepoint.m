@@ -76,7 +76,7 @@ Q = [Q1(:,1).*Q2(:,1) , ...
      Q1(:,3).*Q2(:,3) ] ; 
 
 
-[U,S,V] = svd(Q,0);
+[U,S,V] = svd(Q,0); % svd(,0) efficient decomposition
 EE = V(:,6:9);
    
 A = calibrated_fivepoint_helper( EE ) ;
