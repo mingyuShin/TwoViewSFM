@@ -26,6 +26,7 @@ addpath('vlfeat-0.9.21');
 images = imageDatastore('data');
 img1 = readimage(images, 1);
 img2 = readimage(images, 2);
+[height, width] = size(img1, 1, 2);
 
 % own datasets
 % image1 = rgb2gray(imread('data/sfm01.JPG'));
@@ -45,13 +46,13 @@ temp2 = [2947.63139413012,  0,                   2009.35816825727;
 
 
 % resize image with camearaParam
-img1 = imresize(img1, [360 640]);
-img2 = imresize(img2, [360 640]);
+% img1 = imresize(img1, [360 640]);
+% img2 = imresize(img2, [360 640]);
 
 % camera calibration
-camParams = load('data/cameraParams.mat');
-calImg1 = undistortImage(img1, camParams.cameraParams);
-calImg2 = undistortImage(img2, camParams.cameraParams);
+% camParams = load('data/cameraParams.mat');
+% calImg1 = undistortImage(img1, camParams.cameraParams);
+% calImg2 = undistortImage(img2, camParams.cameraParams);
 
 % SIFT feature extraction
 [kp1, kp2] = SIFTFeatureExtract(img1, img2);
@@ -61,10 +62,19 @@ homo_kp1 = horzcat(kp1(1:5,:), ones([5,1]));
 homo_kp2 = horzcat(kp2(1:5,:), ones([5,1]));
 
 % multiple intrinsic matrix
-homo_normal_kp1 = homo_kp1*inv(temp)'; %(5,3)
+homo_normal_kp1 = temp\homo_kp1'; %(3,5)
 homo_normal_kp2 = temp\homo_kp2'; %(3,5)
 
-Evec = calibrated_fivepoint(homo_normal_kp1',homo_normal_kp2);
+[eMatrix, num] = fivePoint(kp1(1:5,:)', kp2(1:5,:)', temp,temp);
+
+for i=1:num
+    var = eMatrix{1,i} * homo_normal_kp1
+    if eMatrix{1,i}>0
+        goodEMatrix = eMatrix{1,i};
+    end
+end
+
+Evec = calibrated_fivepoint(homo_normal_kp1,homo_normal_kp2);
 
 
 % lib example, not completement
