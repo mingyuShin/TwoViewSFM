@@ -14,7 +14,8 @@ function SavePLY(filename, X)
     fprintf(out,'property uchar diffuse_blue\n');
     fprintf(out,'end_header\n');
     for i=1:size(X,2)
-        fprintf(out,'%f %f %f %d %d %d\n',[X(1,i),X(2,i),X(3,i),min(round(X(4,i)*255),255),min(round(X(5,i)*255),255),min(round(X(6,i)*255),255)]);
+%         fprintf(out,'%f %f %f %d %d %d\n',[X(1,i),X(2,i),X(3,i),min(round(X(4,i)*255),255),min(round(X(5,i)*255),255),min(round(X(6,i)*255),255)]);
+        fprintf(out,'%f %f %f %d %d %d\n',[X(1,i),X(2,i),X(3,i),min(round(X(4,i)),255),min(round(X(5,i)),255),min(round(X(6,i)),255)]);
     end
     fclose(out);
 end
